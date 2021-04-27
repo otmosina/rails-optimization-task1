@@ -1,6 +1,8 @@
 # Deoptimized version of homework task
 require 'json'
 require 'date'
+require 'ruby-progressbar'
+
 #require 'awesome_print'
 #require 'ruby-prof'
 
@@ -43,8 +45,12 @@ def collect_stats_from_users(report, users_objects, &block)
 end
 
 def work filename = 'data.txt'
-  print "start work..."
   file_lines = File.read(filename).split("\n")
+
+  progressbar = ProgressBar.create(
+    total: file_lines.size,
+    format: '%a, %J, %E, %B'
+  )
 
   users = []
   sessions = []
@@ -53,6 +59,7 @@ def work filename = 'data.txt'
     cols = line.split(',')
     users = users + [parse_user(line)] if cols[0] == 'user'
     sessions = sessions + [parse_session(line)] if cols[0] == 'session'
+    progressbar.increment
   end
 
   # Отчёт в json
@@ -74,11 +81,17 @@ def work filename = 'data.txt'
 
   report[:totalUsers] = users.count
 
+  progressbar = ProgressBar.create(
+    total: sessions.size,
+    format: '%a, %J, %E, %B'
+  )
+
   # Подсчёт количества уникальных браузеров
   uniqueBrowsers = []
   sessions.each do |session|
     browser = session['browser']
     uniqueBrowsers += [browser] if uniqueBrowsers.all? { |b| b != browser }
+    progressbar.increment
   end
 
   report['uniqueBrowsersCount'] = uniqueBrowsers.count
@@ -96,11 +109,17 @@ def work filename = 'data.txt'
   # Статистика по пользователям
   users_objects = []
 
+  progressbar = ProgressBar.create(
+    total: users.size,
+    format: '%a, %J, %E, %B'
+  )
+
   users.each do |user|
     attributes = user
     user_sessions = sessions.select { |session| session['user_id'] == user['id'] }
     user_object = User.new(attributes: attributes, sessions: user_sessions)
     users_objects = users_objects + [user_object]
+    progressbar.increment
   end
 
   report['usersStats'] = {}

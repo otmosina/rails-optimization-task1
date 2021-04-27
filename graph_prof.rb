@@ -5,7 +5,7 @@ require 'ruby-prof'
 p "Start prof..."
 RubyProf.measure_mode = RubyProf::WALL_TIME
 result = RubyProf.profile do
-  work('data/data25.txt')
+  work('data/data100000.txt')
 end
 
 printer = RubyProf::GraphHtmlPrinter.new(result)
