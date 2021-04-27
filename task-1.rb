@@ -43,6 +43,7 @@ def collect_stats_from_users(report, users_objects, &block)
 end
 
 def work filename = 'data.txt'
+  print "start work..."
   file_lines = File.read(filename).split("\n")
 
   users = []
