@@ -51,7 +51,7 @@ def work filename = 'data.txt'
   progressbar = ProgressBar.create(
     total: file_lines.size,
     format: '%a, %J, %E, %B'
-  )
+  ) if ProgressBarEnabler.show?
 
   users = []
   sessions = {}
@@ -69,7 +69,7 @@ def work filename = 'data.txt'
       end
     end
       #sessions = sessions + [] 
-    progressbar.increment
+    progressbar.increment if ProgressBarEnabler.show?
   end
   
   #puts sessions
@@ -95,17 +95,18 @@ def work filename = 'data.txt'
 
   report[:totalUsers] = users.count
 
+  
   progressbar = ProgressBar.create(
     total: sessions.values().flatten.size,
     format: '%a, %J, %E, %B'
-  )
+  ) if ProgressBarEnabler.show?
 
   # Подсчёт количества уникальных браузеров
   uniqueBrowsers = []
   sessions.values().flatten.each do |session|
     browser = session['browser']
     uniqueBrowsers += [browser] if uniqueBrowsers.all? { |b| b != browser }
-    progressbar.increment
+    progressbar.increment if ProgressBarEnabler.show?
   end
 
   report['uniqueBrowsersCount'] = uniqueBrowsers.count
@@ -126,7 +127,7 @@ def work filename = 'data.txt'
   progressbar = ProgressBar.create(
     total: users.size,
     format: '%a, %J, %E, %B'
-  )
+  ) if ProgressBarEnabler.show?
 
   users.each do |user|
     attributes = user
@@ -134,7 +135,7 @@ def work filename = 'data.txt'
     user_sessions = sessions[user['id']]
     user_object = User.new(attributes: attributes, sessions: user_sessions)
     users_objects = users_objects + [user_object]
-    progressbar.increment
+    progressbar.increment if ProgressBarEnabler.show?
   end
 
   report['usersStats'] = {}
@@ -176,22 +177,17 @@ def work filename = 'data.txt'
 
   File.write('result.json', "#{report.to_json}\n")
 end
-
-#work('data/data25.txt')
-
-#ap File.read('result.json')
-
-# profile the code
-#RubyProf.start
-#work('data/data25.txt')
-#result = RubyProf.stop
-
-# print a flat profile to text
-#printer = RubyProf::FlatPrinter.new(result)
-#printer.print(STDOUT)
-
-#rinter = RubyProf::GraphHtmlPrinter.new(result)
-#printer.print('index.html', :min_percent=>0)
-
-#printer = RubyProf::MultiPrinter.new(result)
-#printer.print(:path => ".", :profile => "profile")
+class ProgressBarEnabler
+  @@flag = true
+  def self.enable!
+    @@flag = true
+  end
+  def self.disable!
+    @@flag = false
+  end  
+  def self.show?
+    @@flag
+  end
+end
+#ProgressBarEnabler.disable!
+#work('data/data1000.txt')
