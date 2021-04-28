@@ -24,6 +24,13 @@ printer.print(:path => "prof_reports", :profile => 'callgrind')
 printer = RubyProf::CallStackPrinter.new(result)
 printer.print(File.open('prof_reports/callstack.html', 'w+'))
 
+
+#require 'memory_profiler'
+#report = MemoryProfiler.report do
+#  work('data/data100000.txt')
+#end
+#report.pretty_print
+
 system("open", "http://localhost:8000/flat.txt")
 system("open", "http://localhost:8000/callstack.html")
 system("open", "http://localhost:8000/graph.html")

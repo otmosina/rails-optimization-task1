@@ -10,3 +10,5 @@ gem 'stackprof'
 gem 'json'
 
 gem 'benchmark-trend'
+
+gem 'memory_profiler'
