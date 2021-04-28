@@ -3,6 +3,7 @@ require 'ruby-prof'
 
 
 p "Start prof..."
+ProgressBarEnabler.disable!
 RubyProf.measure_mode = RubyProf::WALL_TIME
 result = RubyProf.profile do
   work('data/data100000.txt')
