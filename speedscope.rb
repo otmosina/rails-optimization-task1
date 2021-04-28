@@ -1,4 +1,4 @@
-# Stackprof report -> flamegraph in speedscope
+# Stackprof report -> flamegraph in speedscope https://www.speedscope.app
 # ruby 17-stackprof-speedscope.rb
 require 'json'
 require 'stackprof'
