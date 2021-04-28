@@ -23,3 +23,7 @@ printer.print(:path => "prof_reports", :profile => 'callgrind')
 #CALLSTACK
 printer = RubyProf::CallStackPrinter.new(result)
 printer.print(File.open('prof_reports/callstack.html', 'w+'))
+
+system("open", "http://localhost:8000/flat.txt")
+system("open", "http://localhost:8000/callstack.html")
+system("open", "http://localhost:8000/graph.html")
