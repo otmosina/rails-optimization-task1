@@ -39,6 +39,7 @@ PLATFORMS
 
 DEPENDENCIES
   benchmark-ips
+  benchmark-trend
   json
   kalibera
   rspec-benchmark

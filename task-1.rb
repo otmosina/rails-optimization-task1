@@ -45,6 +45,7 @@ def collect_stats_from_users(report, users_objects, &block)
 end
 
 def work filename = 'data.txt'
+  puts "start work..."
   file_lines = File.read(filename).split("\n")
 
   progressbar = ProgressBar.create(
@@ -53,15 +54,28 @@ def work filename = 'data.txt'
   )
 
   users = []
-  sessions = []
+  sessions = {}
 
   file_lines.each do |line|
     cols = line.split(',')
     users = users + [parse_user(line)] if cols[0] == 'user'
-    sessions = sessions + [parse_session(line)] if cols[0] == 'session'
+    if cols[0] == 'session'
+      ses = parse_session(line)
+      ses['user_id']
+      if sessions[ses['user_id']]
+        sessions[ses['user_id']] << ses
+      else
+        sessions[ses['user_id']] = [ses]
+      end
+    end
+      #sessions = sessions + [] 
     progressbar.increment
   end
-
+  
+  #puts sessions
+  #puts "\n\n\n"
+  #puts sessions.values.flatten
+  
   # Отчёт в json
   #   - Сколько всего юзеров +
   #   - Сколько всего уникальных браузеров +
@@ -82,13 +96,13 @@ def work filename = 'data.txt'
   report[:totalUsers] = users.count
 
   progressbar = ProgressBar.create(
-    total: sessions.size,
+    total: sessions.values().flatten.size,
     format: '%a, %J, %E, %B'
   )
 
   # Подсчёт количества уникальных браузеров
   uniqueBrowsers = []
-  sessions.each do |session|
+  sessions.values().flatten.each do |session|
     browser = session['browser']
     uniqueBrowsers += [browser] if uniqueBrowsers.all? { |b| b != browser }
     progressbar.increment
@@ -96,10 +110,10 @@ def work filename = 'data.txt'
 
   report['uniqueBrowsersCount'] = uniqueBrowsers.count
 
-  report['totalSessions'] = sessions.count
+  report['totalSessions'] = sessions.values().flatten.count
 
   report['allBrowsers'] =
-    sessions
+    sessions.values().flatten
       .map { |s| s['browser'] }
       .map { |b| b.upcase }
       .sort
@@ -116,7 +130,8 @@ def work filename = 'data.txt'
 
   users.each do |user|
     attributes = user
-    user_sessions = sessions.select { |session| session['user_id'] == user['id'] }
+    #user_sessions = sessions.select { |session| session['user_id'] == user['id'] }
+    user_sessions = sessions[user['id']]
     user_object = User.new(attributes: attributes, sessions: user_sessions)
     users_objects = users_objects + [user_object]
     progressbar.increment

@@ -8,3 +8,5 @@ gem 'ruby-prof'
 
 gem 'stackprof'
 gem 'json'
+
+gem 'benchmark-trend'
