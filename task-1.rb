@@ -72,10 +72,6 @@ def work filename = 'data.txt'
     progressbar.increment if ProgressBarEnabler.show?
   end
   
-  #puts sessions
-  #puts "\n\n\n"
-  #puts sessions.values.flatten
-  
   # Отчёт в json
   #   - Сколько всего юзеров +
   #   - Сколько всего уникальных браузеров +
